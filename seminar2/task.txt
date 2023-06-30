@@ -1,0 +1,139 @@
+/*
+Задание:
+Создать каталоги students и mentors в домашней директории, а в них — текстовые файлы students_list.txt и
+mentors_list.txt соответственно.
+Открыть созданные в п.1 файлы в любом текстовом редакторе и заполнить их (в соответствии с названием) списком
+Ваших одногруппников и наставников на данном потоке.
+Переместите файл mentors_list.txt в папку students.
+Удалите папку mentors.
+Переименуйте папку students в students_and_mentors.
+Удалите папку students_and_mentors вместе с содержимым.
+7 *. Создать файл file1 и наполнить его произвольным содержимым. Скопировать его в file2. Создать символическую
+ссылку file3 на file1. Создать жёсткую ссылку file4 на file1. Посмотреть, какие inode у файлов. Удалить file1.
+Что стало с остальными созданными файлами? Попробовать вывести их на экран.
+8 *. Дать созданным файлам другие, произвольные имена. Создать новую символическую ссылку.
+Переместить ссылки в другую директорию.
+*/
+
+lllod@GB-Ubuntu:~$ ls
+Desktop  Documents  Downloads  Music  Pictures  Public  snap  Templates  Videos
+lllod@GB-Ubuntu:~$ mkdir students mentors
+lllod@GB-Ubuntu:~$ ls
+Desktop    Downloads  Music     Public  students   Videos
+Documents  mentors    Pictures  snap    Templates
+lllod@GB-Ubuntu:~$ cd mentors
+lllod@GB-Ubuntu:~/mentors$ echo > mentors_list.txt
+lllod@GB-Ubuntu:~/mentors$ nano mentors_list.txt
+lllod@GB-Ubuntu:~/mentors$ ll
+total 12
+drwxrwxr-x  2 lllod lllod 4096 июн 30 14:15 ./
+drwxr-x--- 17 lllod lllod 4096 июн 30 14:12 ../
+-rw-rw-r--  1 lllod lllod   55 июн 30 14:15 mentors_list.txt
+lllod@GB-Ubuntu:~/mentors$ less mentors_list.txt
+lllod@GB-Ubuntu:~/mentors$ cd ..
+lllod@GB-Ubuntu:~$ cd students/
+lllod@GB-Ubuntu:~/students$ echo > students_list.txt
+lllod@GB-Ubuntu:~/students$ nano students_list.txt
+lllod@GB-Ubuntu:~/students$ less students_list.txt
+lllod@GB-Ubuntu:~/students$ ll
+total 12
+drwxrwxr-x  2 lllod lllod 4096 июн 30 14:18 ./
+drwxr-x--- 17 lllod lllod 4096 июн 30 14:18 ../
+-rw-rw-r--  1 lllod lllod  298 июн 30 14:18 students_list.txt
+lllod@GB-Ubuntu:~/students$ cd ..
+lllod@GB-Ubuntu:~$ cd mentors/
+lllod@GB-Ubuntu:~/mentors$ mv mentors_list.txt ~/students/mentors_list.txt
+lllod@GB-Ubuntu:~/mentors$ cd ..
+lllod@GB-Ubuntu:~$ ls
+Desktop    Downloads  Music     Public  students   Videos
+Documents  mentors    Pictures  snap    Templates
+lllod@GB-Ubuntu:~$ cd students/
+lllod@GB-Ubuntu:~/students$ ls
+mentors_list.txt  students_list.txt
+lllod@GB-Ubuntu:~/students$ cd ..
+lllod@GB-Ubuntu:~$ cd mentors/
+lllod@GB-Ubuntu:~/mentors$ ls
+lllod@GB-Ubuntu:~/mentors$ cd ..
+lllod@GB-Ubuntu:~$ rm -r mentors
+lllod@GB-Ubuntu:~$ ls
+Desktop    Downloads  Pictures  snap      Templates
+Documents  Music      Public    students  Videos
+lllod@GB-Ubuntu:~$ mv students/ students_and_mentors/
+lllod@GB-Ubuntu:~$ ls
+Desktop    Downloads  Pictures  snap                  Templates
+Documents  Music      Public    students_and_mentors  Videos
+lllod@GB-Ubuntu:~$ rm -r students_and_mentors/
+lllod@GB-Ubuntu:~$ ls
+Desktop  Documents  Downloads  Music  Pictures  Public  snap  Templates  Videos
+lllod@GB-Ubuntu:~$
+lllod@GB-Ubuntu:~$ mkdir files
+lllod@GB-Ubuntu:~$ cd files/
+lllod@GB-Ubuntu:~/files$ echo > file1
+lllod@GB-Ubuntu:~/files$ nano file1
+lllod@GB-Ubuntu:~/files$ less file1
+lllod@GB-Ubuntu:~/files$ ls
+file1
+lllod@GB-Ubuntu:~/files$ cp file1 file2
+lllod@GB-Ubuntu:~/files$ ls
+file1  file2
+lllod@GB-Ubuntu:~/files$ ln -s file1 file3
+lllod@GB-Ubuntu:~/files$ ls
+file1  file2  file3
+lllod@GB-Ubuntu:~/files$ ll
+total 16
+drwxrwxr-x  2 lllod lllod 4096 июн 30 14:26 ./
+drwxr-x--- 16 lllod lllod 4096 июн 30 14:24 ../
+-rw-rw-r--  1 lllod lllod   14 июн 30 14:24 file1
+-rw-rw-r--  1 lllod lllod   14 июн 30 14:25 file2
+lrwxrwxrwx  1 lllod lllod    5 июн 30 14:26 file3 -> file1
+lllod@GB-Ubuntu:~/files$ ln file1 file4
+lllod@GB-Ubuntu:~/files$ ll
+total 20
+drwxrwxr-x  2 lllod lllod 4096 июн 30 14:26 ./
+drwxr-x--- 16 lllod lllod 4096 июн 30 14:24 ../
+-rw-rw-r--  2 lllod lllod   14 июн 30 14:24 file1
+-rw-rw-r--  1 lllod lllod   14 июн 30 14:25 file2
+lrwxrwxrwx  1 lllod lllod    5 июн 30 14:26 file3 -> file1
+-rw-rw-r--  2 lllod lllod   14 июн 30 14:24 file4
+lllod@GB-Ubuntu:~/files$ ls -li
+total 12
+525982 -rw-rw-r-- 2 lllod lllod 14 июн 30 14:24 file1
+525985 -rw-rw-r-- 1 lllod lllod 14 июн 30 14:25 file2
+525986 lrwxrwxrwx 1 lllod lllod  5 июн 30 14:26 file3 -> file1
+525982 -rw-rw-r-- 2 lllod lllod 14 июн 30 14:24 file4
+lllod@GB-Ubuntu:~/files$ rm file1
+lllod@GB-Ubuntu:~/files$ ls
+file2  file3  file4
+lllod@GB-Ubuntu:~/files$ less file2
+lllod@GB-Ubuntu:~/files$ less file3
+file3: No such file or directory
+lllod@GB-Ubuntu:~/files$ less file4
+lllod@GB-Ubuntu:~/files$ mv file2 new_file2
+lllod@GB-Ubuntu:~/files$ mv file3_new_file3
+mv: missing destination file operand after 'file3_new_file3'
+Try 'mv --help' for more information.
+lllod@GB-Ubuntu:~/files$ mv file4 new_file4
+lllod@GB-Ubuntu:~/files$ ll
+total 16
+drwxrwxr-x  2 lllod lllod 4096 июн 30 14:29 ./
+drwxr-x--- 16 lllod lllod 4096 июн 30 14:28 ../
+lrwxrwxrwx  1 lllod lllod    5 июн 30 14:26 file3 -> file1
+-rw-rw-r--  1 lllod lllod   14 июн 30 14:25 new_file2
+-rw-rw-r--  1 lllod lllod   14 июн 30 14:24 new_file4
+lllod@GB-Ubuntu:~/files$ less new_file2
+lllod@GB-Ubuntu:~/files$ less new_file4
+lllod@GB-Ubuntu:~/files$ mv new_file2 ~/new_file2
+lllod@GB-Ubuntu:~/files$ mv new_file4 ~/new_file4
+lllod@GB-Ubuntu:~/files$ mv file3 ~/new_file3
+lllod@GB-Ubuntu:~/files$ ls
+lllod@GB-Ubuntu:~/files$ cd ..
+lllod@GB-Ubuntu:~$ ls
+Desktop    Downloads  Music      new_file3  Pictures  snap       Videos
+Documents  files      new_file2  new_file4  Public    Templates
+lllod@GB-Ubuntu:~$
+
+
+
+
+
+
