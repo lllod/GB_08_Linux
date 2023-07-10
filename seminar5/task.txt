@@ -1,0 +1,233 @@
+1. Подключить репозиторий с nginx любым удобным способом, установить nginx и потом удалить nginx,
+используя утилиту dpkg.
+----------------------------------------------------------
+
+lllod@GB-Ubuntu:~$ nginx --help
+Command 'nginx' not found, but can be installed with:
+sudo apt install nginx-core    # version 1.18.0-6ubuntu14.3, or
+sudo apt install nginx-extras  # version 1.18.0-6ubuntu14.3
+sudo apt install nginx-light   # version 1.18.0-6ubuntu14.3
+lllod@GB-Ubuntu:~$ sudo apt install curl gnupg2 ca-certificates lsb-release ubuntu-keyring
+[sudo] password for lllod:
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+lsb-release is already the newest version (11.1.0ubuntu4).
+lsb-release set to manually installed.
+ubuntu-keyring is already the newest version (2021.03.26).
+ubuntu-keyring set to manually installed.
+ca-certificates is already the newest version (20230311ubuntu0.22.04.1).
+ca-certificates set to manually installed.
+The following NEW packages will be installed:
+  curl gnupg2
+0 upgraded, 2 newly installed, 0 to remove and 13 not upgraded.
+Need to get 200 kB of archives.
+After this operation, 506 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://ru.archive.ubuntu.com/ubuntu jammy-updates/main amd64 curl amd64 7.81.0-1ubuntu1.10 [194 kB]
+Get:2 http://ru.archive.ubuntu.com/ubuntu jammy-updates/universe amd64 gnupg2 all 2.2.27-3ubuntu2.1 [5 548 B]
+Fetched 200 kB in 0s (492 kB/s)
+Selecting previously unselected package curl.
+(Reading database ... 179278 files and directories currently installed.)
+Preparing to unpack .../curl_7.81.0-1ubuntu1.10_amd64.deb ...
+Unpacking curl (7.81.0-1ubuntu1.10) ...
+Selecting previously unselected package gnupg2.
+Preparing to unpack .../gnupg2_2.2.27-3ubuntu2.1_all.deb ...
+Unpacking gnupg2 (2.2.27-3ubuntu2.1) ...
+Setting up gnupg2 (2.2.27-3ubuntu2.1) ...
+Setting up curl (7.81.0-1ubuntu1.10) ...
+Processing triggers for man-db (2.10.2-1) ...
+lllod@GB-Ubuntu:~$ curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
+>     | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  1561  100  1561    0     0   2147      0 --:--:-- --:--:-- --:--:--  2147
+lllod@GB-Ubuntu:~$ gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg
+pub   rsa2048 2011-08-19 [SC] [expires: 2024-06-14]
+      573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+uid                      nginx signing key <signing-key@nginx.com>
+
+lllod@GB-Ubuntu:~$ echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
+> http://nginx.org/packages/ubuntu `lsb_release -cs` nginx" \
+>     | sudo tee /etc/apt/sources.list.d/nginx.list
+deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu jammy nginx
+lllod@GB-Ubuntu:~$ echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
+>     | sudo tee /etc/apt/preferences.d/99nginx
+Package: *
+Pin: origin nginx.org
+Pin: release o=nginx
+Pin-Priority: 900
+
+lllod@GB-Ubuntu:~$ sudo apt update
+Hit:1 http://ru.archive.ubuntu.com/ubuntu jammy InRelease
+Hit:2 http://ru.archive.ubuntu.com/ubuntu jammy-updates InRelease
+Hit:3 http://ru.archive.ubuntu.com/ubuntu jammy-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu jammy-security InRelease
+Get:5 http://nginx.org/packages/ubuntu jammy InRelease [3 587 B]
+Get:6 http://nginx.org/packages/ubuntu jammy/nginx amd64 Packages [13,3 kB]
+Fetched 16,9 kB in 1s (21,0 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+13 packages can be upgraded. Run 'apt list --upgradable' to see them.
+N: Skipping acquire of configured file 'nginx/binary-i386/Packages' as repository 'http://nginx.org/packages/ubuntu jammy InRelease' doesn't support architecture 'i386'
+lllod@GB-Ubuntu:~$ sudo apt install nginx
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following NEW packages will be installed:
+  nginx
+0 upgraded, 1 newly installed, 0 to remove and 13 not upgraded.
+Need to get 1 012 kB of archives.
+After this operation, 3 283 kB of additional disk space will be used.
+Get:1 http://nginx.org/packages/ubuntu jammy/nginx amd64 nginx amd64 1.24.0-1~jammy [1 012 kB]
+Fetched 1 012 kB in 1s (1 616 kB/s)
+Selecting previously unselected package nginx.
+(Reading database ... 179291 files and directories currently installed.)
+Preparing to unpack .../nginx_1.24.0-1~jammy_amd64.deb ...
+----------------------------------------------------------------------
+
+Thanks for using nginx!
+
+Please find the official documentation for nginx here:
+* https://nginx.org/en/docs/
+
+Please subscribe to nginx-announce mailing list to get
+the most important news about nginx:
+* https://nginx.org/en/support.html
+
+Commercial subscriptions for nginx are available on:
+* https://nginx.com/products/
+
+----------------------------------------------------------------------
+Unpacking nginx (1.24.0-1~jammy) ...
+Setting up nginx (1.24.0-1~jammy) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /lib/systemd/system/nginx.service.
+Processing triggers for man-db (2.10.2-1) ...
+lllod@GB-Ubuntu:~$ nginx --help
+nginx: invalid option: "-"
+lllod@GB-Ubuntu:~$ nginx -h
+nginx version: nginx/1.24.0
+Usage: nginx [-?hvVtTq] [-s signal] [-p prefix]
+             [-e filename] [-c filename] [-g directives]
+
+Options:
+  -?,-h         : this help
+  -v            : show version and exit
+  -V            : show version and configure options then exit
+  -t            : test configuration and exit
+  -T            : test configuration, dump it and exit
+  -q            : suppress non-error messages during configuration testing
+  -s signal     : send signal to a master process: stop, quit, reopen, reload
+  -p prefix     : set prefix path (default: /etc/nginx/)
+  -e filename   : set error log file (default: /var/log/nginx/error.log)
+  -c filename   : set configuration file (default: /etc/nginx/nginx.conf)
+  -g directives : set global directives out of configuration file
+
+lllod@GB-Ubuntu:~$ sudo dpkg -P nginx
+(Reading database ... 179325 files and directories currently installed.)
+Removing nginx (1.24.0-1~jammy) ...
+Purging configuration files for nginx (1.24.0-1~jammy) ...
+Processing triggers for man-db (2.10.2-1) ...
+lllod@GB-Ubuntu:~$ dpkg -l nginx
+dpkg-query: no packages found matching nginx
+lllod@GB-Ubuntu:~$ nginx -h
+-bash: /usr/sbin/nginx: No such file or directory
+lllod@GB-Ubuntu:~$
+
+
+2. Установить пакет на свой выбор, используя snap.
+----------------------------------------------------------
+
+lllod@GB-Ubuntu:~$ sudo snap install postgresql10
+postgresql10 10.4 from Command Prompt, Inc. (cmd✓) installed
+lllod@GB-Ubuntu:~$ snap list
+Name                       Version           Rev    Tracking         Publisher   Notes
+bare                       1.0               5      latest/stable    canonical✓  base
+core                       16-2.59.5         15511  latest/stable    canonical✓  core
+core20                     20230622          1974   latest/stable    canonical✓  base
+core22                     20230612          766    latest/stable    canonical✓  base
+firefox                    110.0-3           2356   latest/stable/…  mozilla✓    -
+gnome-3-38-2004            0+git.6f39565     140    latest/stable/…  canonical✓  -
+gnome-42-2204              0+git.ff35a85     120    latest/stable    canonical✓  -
+gtk-common-themes          0.1-81-g442e511   1535   latest/stable/…  canonical✓  -
+postgresql10               10.4              47     latest/stable    cmd✓        -
+snap-store                 41.3-71-g709398e  959    latest/stable/…  canonical✓  -
+snapd                      2.59.5            19457  latest/stable    canonical✓  snapd
+snapd-desktop-integration  0.9               83     latest/stable/…  canonical✓  -
+lllod@GB-Ubuntu:~$
+
+
+3. * Создать с помощью nano файл test.txt. Настроить автоматический бэкап этого файла раз в 10 минут в файл с
+названием test.txt.bak с использованием cron.
+----------------------------------------------------------
+
+lllod@GB-Ubuntu:~$ nano test.txt
+lllod@GB-Ubuntu:~$ ls -ll
+total 60
+drwxr-xr-x 2 lllod lllod 4096 июн 29 10:16 Desktop
+drwxr-xr-x 2 lllod lllod 4096 июн 29 10:16 Documents
+drwxr-xr-x 2 lllod lllod 4096 июн 29 10:16 Downloads
+drwxrwxr-x 2 lllod lllod 4096 июн 30 14:30 files
+drwxr-xr-x 2 lllod lllod 4096 июн 29 10:16 Music
+-rw-rw-r-- 1 lllod lllod   14 июн 30 14:25 new_file2
+lrwxrwxrwx 1 lllod lllod    5 июн 30 14:26 new_file3 -> file1
+-rw-rw-r-- 1 lllod lllod   14 июн 30 14:24 new_file4
+drwxr-xr-x 2 lllod lllod 4096 июн 29 10:16 Pictures
+drwxr-xr-x 2 lllod lllod 4096 июн 29 10:16 Public
+drwxrwxr-x 2 lllod lllod 4096 июл  7 10:17 seminar4
+drwx------ 4 lllod lllod 4096 июн 29 10:16 snap
+drwxr-xr-x 2 lllod lllod 4096 июн 29 10:16 Templates
+-rwxrwxr-x 1 lllod lllod  424 июл  6 14:42 testscript
+-rw-rw-r-- 1 lllod lllod    9 июл 10 13:44 test.txt
+drwxr-xr-x 2 lllod lllod 4096 июн 29 10:16 Videos
+lllod@GB-Ubuntu:~$ mkdir seminar5
+lllod@GB-Ubuntu:~$ cp test.txt ~/seminar5/test.txt
+lllod@GB-Ubuntu:~$ cd seminar5
+lllod@GB-Ubuntu:~/seminar5$ ls -ll
+total 4
+-rw-rw-r-- 1 lllod lllod 9 июл 10 13:45 test.txt
+lllod@GB-Ubuntu:~/seminar5$ cat test.txt
+testfile
+lllod@GB-Ubuntu:~/seminar5$ crontab -l
+no crontab for lllod
+lllod@GB-Ubuntu:~/seminar5$ crontab -e
+no crontab for lllod - using an empty one
+
+Select an editor.  To change later, run 'select-editor'.
+  1. /bin/nano        <---- easiest
+  2. /usr/bin/mcedit
+  3. /usr/bin/vim.tiny
+  4. /bin/ed
+
+Choose 1-4 [1]: 1
+crontab: installing new crontab
+crontab: installing new crontab
+lllod@GB-Ubuntu:~/seminar5$ crontab -l
+# Edit this file to introduce tasks to be run by cron.
+#
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+#
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').
+#
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+#
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+#
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+#
+# For more information see the manual pages of crontab(5) and cron(8)
+#
+# m h  dom mon dow   command
+*/10 * * * * cp /home/lllod/seminar5/test.txt /home/lllod/seminar5/test.txt.bak
+lllod@GB-Ubuntu:~/seminar5$ ls
+test.txt  test.txt.bak
+lllod@GB-Ubuntu:~/seminar5$
