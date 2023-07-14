@@ -1,0 +1,78 @@
+1. Настроить iptables: разрешить подключения только на 22-й и 80-й порты.
+----------------------------------
+
+lllod@GB-Ubuntu:~$ sudo iptables -L -v
+[sudo] password for lllod:
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+lllod@GB-Ubuntu:~$ sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+lllod@GB-Ubuntu:~$ sudo iptables -P INPUT DROP
+lllod@GB-Ubuntu:~$ sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+lllod@GB-Ubuntu:~$ sudo iptables -L -v
+Chain INPUT (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+   75  4432 ACCEPT     tcp  --  any    any     anywhere             anywhere             tcp dpt:ssh
+    0     0 ACCEPT     tcp  --  any    any     anywhere             anywhere             tcp dpt:http
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+lllod@GB-Ubuntu:~$
+
+
+2. Настроить проброс портов локально с порта 80 на порт 8080.
+----------------------------------
+lllod@GB-Ubuntu:~$ sudo iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+lllod@GB-Ubuntu:~$ sudo iptables -L -t nat
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination
+REDIRECT   tcp  --  anywhere             anywhere             tcp dpt:http redir ports 8080
+
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination
+lllod@GB-Ubuntu:~$
+
+
+3. Запретить любой входящий трафик с IP-адреса 3.4.5.6.
+----------------------------------
+lllod@GB-Ubuntu:~$ sudo iptables -A INPUT -s 3.4.5.6 -j DROP
+lllod@GB-Ubuntu:~$ sudo iptables -L -v
+Chain INPUT (policy DROP 138 packets, 23343 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+  477 28893 ACCEPT     tcp  --  any    any     anywhere             anywhere             tcp dpt:ssh
+    0     0 ACCEPT     tcp  --  any    any     anywhere             anywhere             tcp dpt:http
+    0     0 DROP       all  --  any    any     3.4.5.6              anywhere
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+lllod@GB-Ubuntu:~$
+
+
+4. Запустите mc. Используя ps, найдите PID процесса, завершите процесс, передав ему сигнал 9.
+----------------------------------
+lllod@GB-Ubuntu:~$ mc
+lllod@GB-Ubuntu:~$ ps aux | grep mc
+lllod      43980  0.0  0.2  31560 10140 pts/1    S+   08:44   0:00 mc
+lllod      43991  0.0  0.0  17864  2468 pts/0    S+   08:44   0:00 grep --color=auto mc
+lllod@GB-Ubuntu:~$ kill -s 9 43980
+lllod@GB-Ubuntu:~$ ps aux | grep mc
+lllod      44000  0.0  0.0  17864  2464 pts/0    S+   08:44   0:00 grep --color=auto mc
+lllod@GB-Ubuntu:~$
+
